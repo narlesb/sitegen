@@ -29,8 +29,8 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("Same text", TextType.ITALIC)
         self.assertNotEqual(node1, node2)
     def test_not_equal_url_vs_none(self):
-        node1 = TextNode("Link text", TextType.LINK, "https://example.com")
-        node2 = TextNode("Link text", TextType.LINK, None)
+        node1 = TextNode("Link text", TextType.LINKS, "https://example.com")
+        node2 = TextNode("Link text", TextType.LINKS, None)
         self.assertNotEqual(node1, node2)
 
 
