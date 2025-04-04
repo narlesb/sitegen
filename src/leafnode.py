@@ -1,8 +1,9 @@
 from htmlnode import HTMLNode
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag, prop, value):
-        super().__init(tag, prop, value)
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag=tag, value=value, props=props)
+
 
     def to_html(self):
         #check if value is empty or None
@@ -16,13 +17,5 @@ class LeafNode(HTMLNode):
 
 
         #return properly tagged html
-        props = ""
-        if self.prop:
-            props = " ".join(f'{key}="{value}"' for key, value in self.prop.items())
-            return f"<{self.tag} {props}>{self.value}</{self.tag}>"
-        else:
-            return f"<{self.tag}>{self.value}</{self.tag}>"
-        
-    def test_leaf_to_html_p(self):
-        node = LeafNode("p", "Hello, world!")
-        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+        props_html = self.props_to_html()
+        return f"<{self.tag}{props_html}>{self.value}</{self.tag}>"
