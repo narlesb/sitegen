@@ -4,13 +4,13 @@ from markdown_blocks import markdown_to_html_node
 from htmlnode import HTMLNode
 
 
-def copy_files_recursive(source_dir_path, dest_dir_path):
-    if not os.path.exists(dest_dir_path):
-        os.mkdir(dest_dir_path)
+def copy_files_recursive(source_dir_path, basepath):
+    if not os.path.exists(basepath):
+        os.mkdir(basepath)
 
     for filename in os.listdir(source_dir_path):
         from_path = os.path.join(source_dir_path, filename)
-        dest_path = os.path.join(dest_dir_path, filename)
+        dest_path = os.path.join(basepath, filename)
         print(f" * {from_path} -> {dest_path}")
         if os.path.isfile(from_path):
             shutil.copy(from_path, dest_path)
@@ -25,8 +25,8 @@ def extract_title(markdown):
     
     raise Exception ("No header")
 
-def generate_page(from_path, template_path, dest_path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+def generate_page(from_path, template_path, basepath):
+    print(f"Generating page from {from_path} to {basepath} using {template_path}")
     #read markdown and create variable
     markdown = open(from_path)
     r_markdown = markdown.read()
@@ -45,23 +45,25 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(r_markdown)
     
     #replace placeholders
-    result = r_template.replace("{{ Title }}", title)
-    result = result.replace("{{ Content }}", html_markdown)
+    a_result = r_template.replace("{{ Title }}", title)
+    b_result = a_result.replace("{{ Content }}", html_markdown)
+    c_result = b_result.replace('href="/', f'href="{basepath}')
+    result = c_result.replace('src="/', f'src="{basepath}')
 
     #ensure directtory exists
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    os.makedirs(os.path.dirname(basepath), exist_ok=True)
 
     #write to file
-    with open(dest_path, "w") as f:
+    with open(basepath, "w") as f:
         f.write(result)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, basepath):
     entries = os.listdir(dir_path_content)
 
     for entry in entries:
         full_path = os.path.join(dir_path_content, entry)
-        dest_path = os.path.join(dest_dir_path, entry)
+        dest_path = os.path.join(basepath, entry)
 
         if os.path.isfile(full_path):
             if entry.endswith(".md"):
