@@ -25,8 +25,8 @@ def extract_title(markdown):
     
     raise Exception ("No header")
 
-def generate_page(from_path, template_path, basepath):
-    print(f"Generating page from {from_path} to {basepath} using {template_path}")
+def generate_page(from_path, template_path, output_path, basepath):
+    print(f"Generating page from {from_path} to {output_path} using {template_path}")
     #read markdown and create variable
     markdown = open(from_path)
     r_markdown = markdown.read()
@@ -51,29 +51,29 @@ def generate_page(from_path, template_path, basepath):
     result = c_result.replace('src="/', f'src="{basepath}')
 
     #ensure directtory exists
-    os.makedirs(os.path.dirname(basepath), exist_ok=True)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     #write to file
-    with open(basepath, "w") as f:
+    with open(output_path, "w") as f:
         f.write(result)
 
 
-def generate_pages_recursive(dir_path_content, template_path, basepath):
+def generate_pages_recursive(dir_path_content, template_path, output_dir, basepath):
     entries = os.listdir(dir_path_content)
 
     for entry in entries:
         full_path = os.path.join(dir_path_content, entry)
-        dest_path = os.path.join(basepath, entry)
+        dest_path = os.path.join(output_dir, entry)
 
         if os.path.isfile(full_path):
             if entry.endswith(".md"):
                 print(f"Processing markdown file: {full_path}")
                 dest_html_path = os.path.splitext(dest_path)[0] + ".html"
-                generate_page(full_path, template_path, dest_html_path)
+                generate_page(full_path, template_path, dest_html_path, basepath)
         
         elif os.path.isdir(full_path):
             print(f"Entering directory:{full_path}")
             if not os.path.exists(dest_path):
                 os.mkdir(dest_path)
 
-            generate_pages_recursive(full_path, template_path, dest_path)
+            generate_pages_recursive(full_path, template_path, dest_path, basepath)

@@ -23,7 +23,7 @@ def main():
     copy_files_recursive(dir_path_static, dir_path_public)
 
     print("Generating index page...")
-    generate_pages_recursive("./content", "./template.html", "./docs")
+    generate_pages_recursive("./content", "./template.html", "./docs", basepath)
 
 
 main()
